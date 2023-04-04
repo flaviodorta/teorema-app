@@ -24,21 +24,21 @@ export class UserController {
     return await this.service.findAll();
   }
 
-  @Get('/get-by-id')
-  async getUserById(@Body() id: string): Promise<UserEntity> {
-    const users = await this.service.findOneBy(id);
-
-    return users;
-  }
-
-  // @Get('/get-by-name')
-  // async getUserByName(
-  //   @Body() options: FindOptionsWhere<UserEntity>,
-  // ): Promise<UserEntity> {
-  //   const users = await this.service.findOneBy(options);
+  // @Get('/get-by-id')
+  // async getUserById(@Body() options: FindOptionsWhere<UserEntity>): Promise<UserEntity> {
+  //   const users = await this.service.findOneBy(options: FindOptionsWhere<UserEntity>);
 
   //   return users;
   // }
+
+  @Get('/get-one-user-by')
+  async getOneBy(
+    @Body() options: FindOptionsWhere<UserEntity>,
+  ): Promise<UserEntity> {
+    const users = await this.service.findOneBy(options);
+
+    return users;
+  }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('/create')

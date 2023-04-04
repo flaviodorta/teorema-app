@@ -4,8 +4,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserNotExistsException } from 'src/errors/UserNotExistsException';
-import { UserEntity } from 'src/features/user/entity/user.entity';
 import { UserService } from 'src/features/user/services/user.service';
 import { SignAccessTokenDto } from '../dtos/sign-access-token.dto';
 import { SignInDto } from '../dtos/sign-in.dto';
@@ -31,9 +29,7 @@ export class AuthService {
   async signIn(dto: SignInDto): Promise<any> {
     const { email, password } = dto;
 
-    const user = await this.userService.findOneBy(email);
-
-    console.log('user sign in: ', user);
+    const user = await this.userService.findOneBy({ email });
 
     if (!user) {
       throw new BadRequestException();

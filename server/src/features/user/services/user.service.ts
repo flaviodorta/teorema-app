@@ -4,6 +4,7 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
@@ -36,19 +37,19 @@ export class UserService {
     return users;
   }
 
-  async findOneBy(id: string): Promise<UserEntity> {
+  async findOneBy(options: FindOptionsWhere<UserEntity>): Promise<UserEntity> {
     try {
-      const user = await this.userRepository.findBy({ id })[0];
+      const user = (await this.userRepository.findBy(options))[0];
 
-      console.log('find one by: ', user);
+      console.log(user);
 
-      if (!user) {
-        throw new BadRequestException();
-      }
+      // if (!user) {
+      //   throw new BadRequestException();
+      // }
 
       return user as UserEntity;
     } catch {
-      throw new InternalServerErrorException('User not exists');
+      throw new NotFoundException('User not exists');
     }
   }
 
