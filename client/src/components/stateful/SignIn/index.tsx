@@ -10,15 +10,56 @@ import {
   Text,
 } from '@chakra-ui/react';
 import EmailInput from '../../stateless/EmailInput';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Logo from '../../stateless/Logo';
 import PasswordInput from '../../stateless/PasswordInput';
 import GoogleAuthButton from '../../stateless/GoogleAuthButton';
+import { ROUTES_PATH } from '../../../constants';
+import { useMutation, useQuery } from 'react-query';
+import { postSignIn } from '../../../api/auth';
+import { useDispatch } from 'react-redux';
+import {
+  setEmail,
+  setId,
+  setName,
+  setRole,
+} from '../../../redux/user/user.slice';
+import { useClickAnyWhere } from 'usehooks-ts';
 
-const Login = () => {
-  const [email, setEmail] = useState('');
+const SignIn = () => {
+  const [inputedEmail, setInputedEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const signInMutation = useMutation(postSignIn, {
+    onSuccess: ({ data }) => {
+      dispatch(setEmail(data.user.email));
+      dispatch(setId(data.user.id));
+      dispatch(setRole(data.user.role));
+      dispatch(setName(data.user.name));
+      console.log(data);
+
+      if (data.user.role === 'student') {
+        console.log('here 2');
+        navigate('/' + data.user.role + '/dashboard');
+      }
+    },
+    onError: () => {
+      setError('Email ou senha inválidos');
+    },
+  });
+
+  const handleSignIn = () => {
+    console.log('here');
+    if (inputedEmail !== '' && password !== '') {
+      signInMutation.mutate({ email: inputedEmail, password });
+    }
+  };
+
+  useClickAnyWhere(() => setError(''));
 
   return (
     <Container
@@ -35,7 +76,7 @@ const Login = () => {
             </Heading>
             <HStack spacing='1' justify='center'>
               <Text color='muted'>Não possui uma conta ainda?</Text>
-              <Link to='/register'>
+              <Link to={ROUTES_PATH.SIGN_UP}>
                 <Button variant='link' colorScheme='blue'>
                   Cadastrar
                 </Button>
@@ -54,7 +95,11 @@ const Login = () => {
         >
           <Stack spacing='6'>
             <Stack spacing='5'>
-              <EmailInput email={email} setEmail={setEmail} />
+              <EmailInput
+                error={error}
+                email={inputedEmail}
+                setEmail={setInputedEmail}
+              />
 
               <PasswordInput password={password} setPassword={setPassword} />
 
@@ -66,7 +111,9 @@ const Login = () => {
               </HStack>
 
               <Stack spacing={6}>
-                <Button colorScheme='blue'>Entrar</Button>
+                <Button colorScheme='blue' onClick={handleSignIn}>
+                  Entrar
+                </Button>
                 <Divider />
                 <GoogleAuthButton>Entre com a conta Google</GoogleAuthButton>
               </Stack>
@@ -78,4 +125,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignIn;

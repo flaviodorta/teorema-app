@@ -15,7 +15,7 @@ const AccountCreatedSuccesfulPage = () => {
   return (
     <AbsoluteCenter>
       <VStack spacing={6}>
-        <Heading as='h2'>Conta criado com sucesso!</Heading>
+        <Heading as='h2'>Conta criada com sucesso!</Heading>
         <Text fontSize='18'>
           Você está sendo redirecionado para a página de Entrar.
         </Text>

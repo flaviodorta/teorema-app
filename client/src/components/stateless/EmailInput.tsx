@@ -8,20 +8,24 @@ import React from 'react';
 
 interface Props {
   email: string;
-  emailExists?: boolean;
+  error?: string;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const EmailInput = ({ email, emailExists, setEmail }: Props) => {
+const EmailInput = ({ email, error, setEmail }: Props) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setEmail(e.target.value);
 
   return (
-    <FormControl isInvalid={emailExists} display='flex' flexDirection='column'>
+    <FormControl
+      isInvalid={error !== '' ? true : false}
+      display='flex'
+      flexDirection='column'
+    >
       <FormLabel>Email</FormLabel>
       <Input type='email' value={email} onChange={handleInputChange} />
 
-      <FormErrorMessage>Este email já possui um cadastro.</FormErrorMessage>
+      <FormErrorMessage>{error}</FormErrorMessage>
     </FormControl>
   );
 };

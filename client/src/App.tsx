@@ -1,8 +1,13 @@
+import { Divider } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import StudentRoute from './components/stateless/routes/StudentRoute';
+import { ROUTES_PATH } from './constants';
 import AccountCreatedSuccesfulPage from './pages/AccountCreatedSuccessful';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
+import SignInPage from './pages/SignInPage';
+import SignUpPage from './pages/SignUpPage';
+import { store } from './redux/store';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,20 +23,31 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <div className='h-screen w-screen relative bg-gray-50'>
-        <BrowserRouter>
-          <Routes>
-            <Route path='/login' element={<LoginPage />} />
-            <Route path='/register' element={<RegisterPage />} />
-            <Route
-              path='/account-created'
-              element={<AccountCreatedSuccesfulPage />}
-            />
-          </Routes>
-        </BrowserRouter>
-      </div>
-    </QueryClientProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <div className='h-screen w-screen relative bg-gray-50'>
+          <BrowserRouter>
+            <Routes>
+              <Route path={ROUTES_PATH.SIGN_IN} element={<SignInPage />} />
+              <Route path={ROUTES_PATH.SIGN_UP} element={<SignUpPage />} />
+              <Route
+                path={ROUTES_PATH.ACCOUNT_CREATED}
+                element={<AccountCreatedSuccesfulPage />}
+              />
+
+              <Route path='student' element={<StudentRoute />}>
+                <Route
+                  path='dashboard'
+                  element={<div className='w-full h-full bg-red-600'></div>}
+                />
+              </Route>
+
+              <Route path='*' element={<SignInPage />} />
+            </Routes>
+          </BrowserRouter>
+        </div>
+      </QueryClientProvider>
+    </Provider>
   );
 }
 

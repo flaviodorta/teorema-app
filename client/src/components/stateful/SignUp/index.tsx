@@ -12,43 +12,47 @@ import {
 import { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
-import { postCheckEmailExists, postRegister } from '../../../api/auth';
+import { postSignUp } from '../../../api/auth';
 import EmailInput from '../../stateless/EmailInput';
 import GoogleAuthButton from '../../stateless/GoogleAuthButton';
 import Logo from '../../stateless/Logo';
 import PasswordInput from '../../stateless/PasswordInput';
-import { useClickAnyWhere } from 'usehooks-ts';
+import { useClickAnyWhere, useLocalStorage } from 'usehooks-ts';
 
-const Login = () => {
+const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [emailExists, setEmailExist] = useState(false);
+  const [error, setError] = useState('');
   const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
   const name = 'Jack';
+  const [accessToken, setAccessToken] = useLocalStorage('access_token', '');
+
+  useEffect(() => console.log(accessToken), [accessToken]);
 
   const navigate = useNavigate();
 
-  const register = useMutation(postRegister, {
+  const register = useMutation(postSignUp, {
     onSuccess: ({ data }) => {
       navigate('/account-created');
-      console.log(data);
+      setAccessToken(data.access_token);
+    },
+    onError: ({ data }) => {
+      setError('Este email já possui um cadastro.');
     },
   });
 
-  const handleRegister = async () => {
-    const emailCheckResponse = await postCheckEmailExists({ email });
+  useClickAnyWhere(() => setError(''));
 
+  const handleRegister = async () => {
     if (password === '') {
       setIsPasswordInvalid(true);
-    } else if (emailCheckResponse.data.email === email) {
-      setEmailExist(true);
     } else {
       register.mutate({ email, password, name });
     }
   };
 
   useEffect(() => {
-    setEmailExist(false);
+    setError('');
   }, [email]);
 
   useEffect(() => {
@@ -89,11 +93,7 @@ const Login = () => {
         >
           <Stack spacing='6'>
             <Stack spacing='5'>
-              <EmailInput
-                emailExists={emailExists}
-                email={email}
-                setEmail={setEmail}
-              />
+              <EmailInput error={error} email={email} setEmail={setEmail} />
 
               <PasswordInput
                 password={password}
@@ -131,4 +131,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;
