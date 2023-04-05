@@ -1,11 +1,4 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { CreateUserDto } from '../dtos/create-user.dto';
@@ -38,19 +31,17 @@ export class UserService {
   }
 
   async findOneBy(options: FindOptionsWhere<UserEntity>): Promise<UserEntity> {
-    try {
-      const user = (await this.userRepository.findBy(options))[0];
+    // try {
+    const user = (await this.userRepository.findBy(options))[0];
 
-      console.log(user);
-
-      // if (!user) {
-      //   throw new BadRequestException();
-      // }
-
-      return user as UserEntity;
-    } catch {
-      throw new NotFoundException('User not exists');
+    if (!user) {
+      throw new ConflictException('User already exists');
     }
+
+    return user as UserEntity;
+    // } catch {
+    //   throw new NotFoundException('User not exists');
+    // }
   }
 
   async create(newUser: CreateUserDto): Promise<UserEntity> {
@@ -65,8 +56,6 @@ export class UserService {
     newUser.password = hashedPassword;
 
     const savedUser = (await this.userRepository.save(newUser)) as UserEntity;
-
-    console.log(savedUser);
 
     return savedUser;
   }

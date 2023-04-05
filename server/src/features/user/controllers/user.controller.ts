@@ -4,7 +4,6 @@ import {
   Controller,
   Get,
   Post,
-  Request,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -23,13 +22,6 @@ export class UserController {
   async findAll(): Promise<UserEntity[]> {
     return await this.service.findAll();
   }
-
-  // @Get('/get-by-id')
-  // async getUserById(@Body() options: FindOptionsWhere<UserEntity>): Promise<UserEntity> {
-  //   const users = await this.service.findOneBy(options: FindOptionsWhere<UserEntity>);
-
-  //   return users;
-  // }
 
   @Get('/get-one-user-by')
   async getOneBy(

@@ -16,7 +16,7 @@ export class UserEntity {
   @Column({ unique: true })
   email: string;
 
-  // @Exclude()
+  @Exclude()
   // @Column({ select: false })
   @Column()
   password: string;
@@ -24,8 +24,8 @@ export class UserEntity {
   // @Column()
   // surname: string;
 
-  @Column({ nullable: true })
-  role: number;
+  @Column({ nullable: true, default: 'student' })
+  role: string;
 
   @BeforeInsert()
   emailToLowercase() {

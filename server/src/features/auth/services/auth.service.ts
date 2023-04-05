@@ -23,7 +23,14 @@ export class AuthService {
 
     const { id } = user;
 
-    return await this.signAccessToken({ id, email });
+    user.role = 'student';
+
+    delete user.password;
+
+    return {
+      access_token: await this.signAccessToken({ id, email }),
+      user,
+    };
   }
 
   async signIn(dto: SignInDto): Promise<any> {
@@ -41,16 +48,17 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    return await this.signAccessToken({ id, email });
-  }
-
-  async signAccessToken(
-    dto: SignAccessTokenDto,
-  ): Promise<{ access_token: string }> {
-    const payload = { sub: dto.id, email: dto.email };
+    delete user.password;
 
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: await this.signAccessToken({ id, email }),
+      user,
     };
+  }
+
+  async signAccessToken(dto: SignAccessTokenDto): Promise<string> {
+    const payload = { sub: dto.id, email: dto.email };
+
+    return await this.jwtService.signAsync(payload);
   }
 }
