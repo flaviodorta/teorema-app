@@ -31,7 +31,6 @@ export class UserService {
   }
 
   async findOneBy(options: FindOptionsWhere<UserEntity>): Promise<UserEntity> {
-    // try {
     const user = (await this.userRepository.findBy(options))[0];
 
     if (!user) {
@@ -39,9 +38,6 @@ export class UserService {
     }
 
     return user as UserEntity;
-    // } catch {
-    //   throw new NotFoundException('User not exists');
-    // }
   }
 
   async create(newUser: CreateUserDto): Promise<UserEntity> {

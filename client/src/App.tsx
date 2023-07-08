@@ -2,7 +2,7 @@ import { Divider } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import StudentRoute from './components/stateless/routes/StudentRoute';
+import PrivateRoute from './components/stateless/routes/PrivateRoute';
 import { ROUTES_PATH } from './constants';
 import AccountCreatedSuccesfulPage from './pages/AccountCreatedSuccessful';
 import SignInPage from './pages/SignInPage';
@@ -35,7 +35,7 @@ function App() {
                 element={<AccountCreatedSuccesfulPage />}
               />
 
-              <Route path='student' element={<StudentRoute />}>
+              <Route path='student' element={<PrivateRoute role='student' />}>
                 <Route
                   path='dashboard'
                   element={<div className='w-full h-full bg-red-600'></div>}
